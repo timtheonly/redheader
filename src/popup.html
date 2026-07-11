@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>RedHeader</title>
+        <link rel="stylesheet" href="popup.css" />
+    </head>
+    <body>
+        <h1>Header Modifier</h1>
+
+        <form id="rule-form">
+            <label>
+                URL filter
+                <input
+                    type="text"
+                    id="urlFilter"
+                    placeholder="* (all URLs) or e.g. *://api.example.com/*"
+                />
+            </label>
+
+            <label>
+                Operation
+                <select id="operation">
+                    <option value="set">Set / Add</option>
+                    <option value="remove">Remove</option>
+                </select>
+            </label>
+
+            <label>
+                Header name
+                <input
+                    type="text"
+                    id="headerName"
+                    placeholder="e.g. Authorization"
+                    required
+                />
+            </label>
+
+            <label id="headerValueLabel">
+                Header value
+                <input
+                    type="text"
+                    id="headerValue"
+                    placeholder="e.g. Bearer my-token"
+                />
+            </label>
+
+            <button type="submit">Add rule</button>
+        </form>
+
+        <h2>Active rules</h2>
+        <ul id="rule-list"></ul>
+
+        <p class="note">
+            Rules apply immediately to matching outgoing request.
+        </p>
+
+        <script src="popup.js"></script>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "redheader",
+  "version": "1.0.0",
+  "description": "Chrome extension (Manifest V3, TypeScript) for modifying outgoing HTTP request headers.",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit && node build.js",
+    "typecheck": "tsc --noEmit",
+    "watch": "node build.js --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.0"
+  }
+}
