@@ -1,5 +1,6 @@
 // src/popup.ts
 import { HeaderRule, HeaderOperation } from "./types";
+import { getRules, saveRules } from "./shared";
 
 const form = document.getElementById("rule-form") as HTMLFormElement;
 const urlFilterInput = document.getElementById("urlFilter") as HTMLInputElement;
@@ -23,16 +24,6 @@ operationSelect.addEventListener("change", () => {
   headerValueInput.required = !isRemove;
 });
 
-async function getRules(): Promise<HeaderRule[]> {
-  const { rules = [] } = (await chrome.storage.local.get("rules")) as {
-    rules?: HeaderRule[];
-  };
-  return rules;
-}
-
-async function saveRules(rules: HeaderRule[]): Promise<void> {
-  await chrome.storage.local.set({ rules });
-}
 
 function renderRules(rules: HeaderRule[]): void {
   ruleList.innerHTML = "";

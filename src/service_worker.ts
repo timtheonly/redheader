@@ -1,4 +1,5 @@
 import { HeaderRule } from "./types";
+import { getRules } from "./shared";
 
 const RESOURCE_TYPES: chrome.declarativeNetRequest.ResourceType[] = [
   "main_frame",
@@ -17,10 +18,7 @@ const RESOURCE_TYPES: chrome.declarativeNetRequest.ResourceType[] = [
 ] as chrome.declarativeNetRequest.ResourceType[];
 
 async function rules(): Promise<void> {
-  const { rules = [] } = (await chrome.storage.local.get("rules")) as {
-    rules?: HeaderRule[];
-  };
-  console.log(rules);
+  const rules = await getRules();
   const enabledRules = rules.filter((rule: HeaderRule) => rule.enabled);
 
   const newRules = enabledRules.map((rule: HeaderRule, idx: number) => {
@@ -52,7 +50,6 @@ async function rules(): Promise<void> {
       },
     };
   });
-  console.log(newRules);
   const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
   const existingRuleIds = existingRules.map(
     (rule: chrome.declarativeNetRequest.Rule) => rule.id,
@@ -70,7 +67,6 @@ chrome.storage.onChanged.addListener(
     area: chrome.storage.AreaName,
   ) => {
     if (area === "local" && changes.rules) {
-      console.log("updating rules");
       void rules();
     }
   },
