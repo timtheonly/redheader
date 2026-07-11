@@ -30,7 +30,7 @@ async function build() {
 
   // Copy static assets alongside the compiled JS
   for (const fileName of staticSrcFiles) {
-      fs.copyFileSync(path.join(srcdir, fileName), path.join(outdir, "manifest.json"));
+      fs.copyFileSync(path.join(srcdir, fileName), path.join(outdir, fileName));
   }
 
   fs.mkdirSync(path.join(outdir, "icons"), { recursive: true });
