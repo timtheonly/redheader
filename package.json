@@ -5,12 +5,15 @@
   "private": true,
   "scripts": {
     "build": "tsc --noEmit && node build.js",
+    "package": "node package.js",
+    "build_package": "tsc --noEmit && node build.js && node package.js",
     "typecheck": "tsc --noEmit",
     "watch": "node build.js --watch"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.270",
     "esbuild": "^0.23.0",
-    "typescript": "^5.5.0"
+    "typescript": "^5.5.0",
+    "archiver": "^8.0.0"
   }
 }
