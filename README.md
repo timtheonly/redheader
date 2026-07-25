@@ -12,12 +12,13 @@ HTTP request headers, written in TypeScript and bundled with esbuild.
  
 ```
 src/
-  types.ts        Shared HeaderRule type used by both entry points
-  background.ts   Service worker: syncs declarativeNetRequest rules from storage
-  popup.ts         Popup UI logic: add/toggle/delete rules
-popup.html          Popup markup
-popup.css           Popup styling
-manifest.json        Extension manifest (MV3)
+  types.ts            Shared HeaderRule type used by both entry points
+  service_worker.ts   Service worker: syncs declarativeNetRequest rules from storage
+  shared.ts           Shared localsotrage helper funcs
+  popup.ts            Popup UI logic: add/toggle/delete rules
+  popup.html          Popup markup
+  popup.css           Popup styling
+manifest.json         Extension manifest (MV3)
 icons/                Toolbar icons
 build.js              esbuild bundler script -> outputs to dist/
 tsconfig.json         TypeScript compiler config
