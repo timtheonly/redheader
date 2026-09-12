@@ -53,6 +53,10 @@ button {
   margin-top: 4px;
 }
 
+button#cancelBtn {
+  background: light-dark(#dc2626, #9b2222);
+}
+
 ul#rule-list {
   list-style: none;
   padding: 0;

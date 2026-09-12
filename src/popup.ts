@@ -10,6 +10,7 @@ const operationSelect = document.getElementById(
 const headerNameInput = document.getElementById(
   "headerName",
 ) as HTMLInputElement;
+const headerIdInput = document.getElementById("headerId") as HTMLInputElement;
 const headerValueInput = document.getElementById(
   "headerValue",
 ) as HTMLInputElement;
@@ -17,6 +18,8 @@ const headerValueLabel = document.getElementById(
   "headerValueLabel",
 ) as HTMLLabelElement;
 const ruleList = document.getElementById("rule-list") as HTMLUListElement;
+const submitBtn = document.getElementById("submitbtn") as HTMLButtonElement;
+const cancelBtn = document.getElementById("cancelBtn") as HTMLButtonElement;
 
 operationSelect.addEventListener("change", () => {
   const isRemove = operationSelect.value === "remove";
@@ -71,7 +74,22 @@ function renderRules(rules: HeaderRule[]): void {
       renderRules(updated);
     });
 
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-btn";
+    editBtn.textContent = "Edit";
+    editBtn.addEventListener("click", async () => {
+      headerNameInput.value = rule.headerName;
+      headerValueInput.value = rule.headerValue;
+      urlFilterInput.value = rule.urlFilter;
+      operationSelect.value = rule.operation;
+      operationSelect.dispatchEvent(new Event("change"));
+      headerIdInput.value = rule.id.toString();
+      submitBtn.innerText = "Save";
+      cancelBtn.hidden = false;
+    });
+
     actions.appendChild(toggleBtn);
+    actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
     li.appendChild(info);
     li.appendChild(actions);
@@ -79,15 +97,31 @@ function renderRules(rules: HeaderRule[]): void {
   });
 }
 
+async function resetForm(e: Event) {
+  e.preventDefault();
+  form.reset();
+  headerIdInput.value = "";
+  submitBtn.innerText = "Add rule";
+  cancelBtn.hidden = true;
+  headerValueLabel.style.display = "block";
+}
+
+cancelBtn.addEventListener("click", resetForm);
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const rules = await getRules();
+  let rules = await getRules();
   const operation = operationSelect.value as HeaderOperation;
 
+  const isEditing = headerIdInput.value !== "";
+  const editedRule = isEditing
+    ? rules.find((r) => r.id === Number(headerIdInput.value))
+    : undefined;
+
   const newRule: HeaderRule = {
-    id: Date.now(),
-    enabled: true,
+    id: isEditing ? Number(headerIdInput.value) : Date.now(),
+    enabled: editedRule?.enabled ?? true,
     urlFilter: urlFilterInput.value.trim(),
     operation,
     headerName: headerNameInput.value.trim(),
@@ -95,12 +129,11 @@ form.addEventListener("submit", async (e) => {
   };
 
   if (!newRule.headerName) return;
-
+  rules = rules.filter((r) => r.id !== newRule.id);
   rules.push(newRule);
   await saveRules(rules);
   renderRules(rules);
-  form.reset();
-  headerValueLabel.style.display = "block";
+  resetForm(e);
 });
 
 (async function init(): Promise<void> {
