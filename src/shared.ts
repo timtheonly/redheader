@@ -7,6 +7,15 @@ export async function getRules(): Promise<HeaderRule[]> {
   return rules;
 }
 
+export async function getPausedIds(): Promise<number[]> {
+  const { pausedIds = [] } = (await chrome.storage.local.get("pausedIds")) as { pausedIds?: number[] }
+  return pausedIds;
+}
+
+export async function savePauseIds(pausedIds: number[]): Promise<void> {
+  await chrome.storage.local.set({ pausedIds });
+}
+
 export async function saveRules(rules: HeaderRule[]): Promise<void> {
   await chrome.storage.local.set({ rules });
 }

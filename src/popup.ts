@@ -1,6 +1,6 @@
 // src/popup.ts
 import { HeaderRule, HeaderOperation } from "./types";
-import { getRules, saveRules } from "./shared";
+import { getRules, saveRules, getPausedIds, savePauseIds } from "./shared";
 
 const form = document.getElementById("rule-form") as HTMLFormElement;
 const urlFilterInput = document.getElementById("urlFilter") as HTMLInputElement;
@@ -20,6 +20,7 @@ const headerValueLabel = document.getElementById(
 const ruleList = document.getElementById("rule-list") as HTMLUListElement;
 const submitBtn = document.getElementById("submitbtn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancelBtn") as HTMLButtonElement;
+const pauseBtn = document.getElementById("pauseBtn") as HTMLButtonElement;
 
 operationSelect.addEventListener("change", () => {
   const isRemove = operationSelect.value === "remove";
@@ -28,13 +29,14 @@ operationSelect.addEventListener("change", () => {
 });
 
 
-function renderRules(rules: HeaderRule[]): void {
+async function renderRules(rules: HeaderRule[]): Promise<void> {
   ruleList.innerHTML = "";
   if (rules.length === 0) {
     ruleList.innerHTML =
       '<li style="justify-content:center;color:#999;">No rules yet</li>';
     return;
   }
+  let pausedRuleIds = await getPausedIds();
 
   rules.forEach((rule) => {
     const li = document.createElement("li");
@@ -54,12 +56,21 @@ function renderRules(rules: HeaderRule[]): void {
 
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "toggle-btn";
-    toggleBtn.textContent = rule.enabled ? "On" : "Off";
+    if (pausedRuleIds.includes(rule.id)) {
+      toggleBtn.textContent = "Off";
+    } else {
+      toggleBtn.textContent = rule.enabled ? "On" : "Off";
+    }
+
     toggleBtn.addEventListener("click", async () => {
       const current = await getRules();
       const target = current.find((r) => r.id === rule.id);
       if (!target) return;
       target.enabled = !target.enabled;
+      if (target.enabled && pausedRuleIds.includes(rule.id)) {
+        pausedRuleIds = pausedRuleIds.filter((id) => id !== rule.id);
+      }
+      await savePauseIds(pausedRuleIds);
       await saveRules(current);
       renderRules(current);
     });
@@ -70,6 +81,10 @@ function renderRules(rules: HeaderRule[]): void {
     deleteBtn.addEventListener("click", async () => {
       const current = await getRules();
       const updated = current.filter((r) => r.id !== rule.id);
+      if (pausedRuleIds.includes(rule.id)) {
+        pausedRuleIds = pausedRuleIds.filter((id) => id !== rule.id);
+      }
+      await savePauseIds(pausedRuleIds);
       await saveRules(updated);
       renderRules(updated);
     });
@@ -107,6 +122,29 @@ async function resetForm(e: Event) {
 }
 
 cancelBtn.addEventListener("click", resetForm);
+pauseBtn.addEventListener("click", async () => {
+  const rules = await getRules();
+  let pausedRuleIds = await getPausedIds();
+  const isPaused = pausedRuleIds.length > 0;
+  const updatedRules: HeaderRule[] = rules.map((rule) => {
+    if (isPaused) {
+      if (pausedRuleIds.includes(rule.id)) {
+        rule.enabled = true;
+        pausedRuleIds = pausedRuleIds.filter((id) => { return id !== rule.id; });
+      }
+    } else {
+      if (rule.enabled) {
+        rule.enabled = false;
+        pausedRuleIds.push(rule.id)
+      }
+    }
+    return rule;
+  });
+  pauseBtn.innerText = isPaused ? "Pause all rules" : "Resume paused rules";
+  await savePauseIds(pausedRuleIds);
+  await saveRules(updatedRules);
+  renderRules(updatedRules);
+});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -138,5 +176,8 @@ form.addEventListener("submit", async (e) => {
 
 (async function init(): Promise<void> {
   const rules = await getRules();
+  const pausedRuleIds = await getPausedIds();
+  const isPaused = pausedRuleIds.length > 0;
+  pauseBtn.innerText = isPaused ?  "Resume paused rules" : "Pause all rules" ;
   renderRules(rules);
 })();
