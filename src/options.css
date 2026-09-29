@@ -1,0 +1,12 @@
+body {
+  width: auto;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+ul#rule-list {
+  margin-top: 24px;
+  max-height: none;
+  overflow-y: visible;
+}

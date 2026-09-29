@@ -103,6 +103,30 @@ ul#rule-list li {
   background: light-dark(#dc2626, #9b2222);
 }
 
+.pagination[hidden] {
+  display: none;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.pagination button {
+  width: auto;
+  padding: 3px 7px;
+  font-size: 11px;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .note {
   font-size: 10px;
   color:light-dark(#555, #c8c6c6);

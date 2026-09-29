@@ -2,12 +2,13 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>RedHeader</title>
+        <title>RedHeader — All rules</title>
         <link rel="stylesheet" href="popup.css" />
+        <link rel="stylesheet" href="options.css" />
     </head>
     <body>
-        <h1>Header Modifier</h1>
-        <button type="button" id="pauseBtn" >Pause all rules</button>
+        <h1>All rules</h1>
+
         <form id="rule-form">
             <label>
                 URL filter
@@ -49,19 +50,12 @@
             <button type="button" id="cancelBtn" hidden="true">Cancel</button>
         </form>
 
-        <h2>Active rules</h2>
         <ul id="rule-list"></ul>
         <div id="pagination" class="pagination" hidden>
             <button type="button" id="prevPageBtn">Prev</button>
             <span id="pageIndicator"></span>
             <button type="button" id="nextPageBtn">Next</button>
         </div>
-        <button type="button" id="viewAllBtn">View all rules</button>
-
-        <p class="note">
-            Rules apply immediately to matching outgoing request.
-        </p>
-
-        <script src="popup.js"></script>
+        <script src="options.js"></script>
     </body>
 </html>
